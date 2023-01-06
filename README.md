@@ -24,6 +24,8 @@ While the program is running in a terminal it will accept a few basic commands t
 
 - boost - Starts using the boost loop
 - noboost - Stops using the boost loop and starts using the non-boost loop
+- clear - Clears the screen
+- help - Shows a help message
 
 ## Configuration
 I don't believe any would need to use this program, but I have created some basic configuration for the program
@@ -34,6 +36,7 @@ BOOST=true;
 LOGLEVEL=2;
 LOGFILE=/var/log/atsudae.log;
 MAXFAIL=5;
+STDIO=false;
 ```
 Alternative version
 ```conf
@@ -46,6 +49,7 @@ This is the basic and default configuration. You do not need to separate with ne
 - LOGFILE - The logger will output to stdout but also a file, this will be the file to output to
 - MAXFAIL - How many times the program is allowed to fail the basic loop, if this is reached then the program will resort
 to non boost mode. 
+- STDIO - Listen to commands via stdin
 
 ### log levels
 
