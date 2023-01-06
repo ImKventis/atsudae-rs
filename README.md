@@ -1,5 +1,5 @@
 
-# Atsudae (*熱*い *dae*mon)
+# Atsudae
 A rewrite of a daemon for my broken system [originally in C](https://github.com/ImKventis/powerthing)
 
 ## The problem
