@@ -51,10 +51,13 @@ pub fn get_status(intel: bool) -> io::Result<bool> {
         Ok(s) => s,
         Err(_v) => return Err(io::Error::new(io::ErrorKind::InvalidData, "File included non-UTF8 bytes"))
     };
-    match content.parse::<u8>() {
-        Ok(v) => Ok(v != 0),
+    let v = match content.parse::<u8>() {
+        Ok(v) => v != 0,
         Err(_e) => return Err(io::Error::new(io::ErrorKind::InvalidData, "File did not include a number. reading was inaccurate"))
-    }
+    };
+
+    // Reverse for intel
+    Ok(if intel { !v } else { v })
 }
 
 pub fn set_status(intel: bool, value: u8) -> io::Result<()> {
@@ -68,7 +71,7 @@ pub fn set_status(intel: bool, value: u8) -> io::Result<()> {
     let mut file: File = File::create(boost_path)?;
     // Had to change value into a string before writing
     // Tried using bytes and char bytes but those didnt work at all
-    let value = if intel { !value } else { value };
+    let value = if intel { if value == 1 {0} else { 1 } } else { value };
     file.write_all(value.to_string().as_bytes())?;
     Ok(())
 }

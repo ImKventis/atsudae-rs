@@ -119,9 +119,11 @@ fn boost_loop(logger: &mut log::Logger, sensors: &lm_sensors::LMSensors, intel: 
             let _ = sysfs::set_status(intel, 0); // last ditch effort tbh
             logger.error("There was an error getting the cpu temperature");
             logger.debug(&format!("IO Error: {:?}", e));
-            return 1;
+            return 1; // treat it like its on fire.
         }
     };
+
+    println!("{:?}", ctemp);
 
     let cstatus = match sysfs::get_status(intel) {
         Ok(v) => {v}
@@ -152,17 +154,18 @@ fn boost_loop(logger: &mut log::Logger, sensors: &lm_sensors::LMSensors, intel: 
     }else { // Boost is not on
         if ctemp > 80 { // Thats hot
             logger.debug("CPU is too hot, leaving boost how it is");
-        }else if ctemp > 65 { // comfortable
-            logger.debug("CPU is ok, turning boost on now");
-            match sysfs::set_status(intel, 1) {
-                Ok(_) => {}
-                Err(e) => {
-                    logger.error("Failed to set the status, boost is still off");
-                    logger.debug(&format!("IO Error: {:?}", e));
-                    return 1;
-                }
-            }
-        }else if ctemp > 40 {
+        }else if ctemp > 65 { // comfortable but not boosting area
+            logger.debug("CPU is ok, leaving boost alone");
+            // match sysfs::set_status(intel, 1) {
+            //     Ok(_) => {}
+            //     Err(e) => {
+            //         logger.error("Failed to set the status, boost is still off");
+            //         logger.debug(&format!("IO Error: {:?}", e));
+            //         return 1;
+            //     }
+            // }
+        }else if ctemp > 50 { // cold
+            logger.debug("CPU is cold, turning boost on now");
             match sysfs::set_status(intel, 1) {
                 Ok(_) => {}
                 Err(e) => {

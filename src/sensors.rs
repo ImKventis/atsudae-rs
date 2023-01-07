@@ -12,9 +12,9 @@ static KNOWN_SENSORS: [&'static str;2] = ["k10temp-pci", "coretemp"];
 
 /// Get the cpu temperature using lm_sensors
 // note: This is equally annoying as it was in C but I cant blame it its just a C wrapper after all
-pub fn get_temp(sensors: &lm_sensors::LMSensors) -> std::io::Result<u8> {
+pub fn get_temp(sensors: &lm_sensors::LMSensors) -> std::io::Result<u32> {
 
-    let mut count: u8 = 0;
+    let mut count: u32 = 0;
     let mut total: f64 = 0.0;
 
     for chip in sensors.chip_iter(None) {
@@ -40,6 +40,8 @@ pub fn get_temp(sensors: &lm_sensors::LMSensors) -> std::io::Result<u8> {
                         lm_sensors::Value::TemperatureInput(v) => {v},
                         _ => continue
                     };
+                    // Very quick debugging
+                    // println!("{} has sbf {} which has temp {}", feature.name().unwrap().unwrap(), subfeature.name().unwrap().unwrap(), coretmp);
                     total += coretmp;
                     count += 1;
                 }
@@ -49,5 +51,5 @@ pub fn get_temp(sensors: &lm_sensors::LMSensors) -> std::io::Result<u8> {
     if count == 0 {
         return Err(std::io::Error::new(std::io::ErrorKind::NotFound, "No compatible sensors found"))
     }
-    Ok(total as u8 / count)
+    Ok(total as u32 / count)
 }
