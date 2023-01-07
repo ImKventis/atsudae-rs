@@ -123,8 +123,6 @@ fn boost_loop(logger: &mut log::Logger, sensors: &lm_sensors::LMSensors, intel: 
         }
     };
 
-    println!("{:?}", ctemp);
-
     let cstatus = match sysfs::get_status(intel) {
         Ok(v) => {v}
         Err(e) => {
